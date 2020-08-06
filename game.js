@@ -267,37 +267,39 @@ function update(game) {
 /* Handler for arrow key presses */
 function onKeyPress(direction) {
   const piece1 = gameState.player1.piece;
-  if (
-    direction === Direction.Left &&
-    piece1.pos[piece1.currPos].every((dot) => leftIsOpen(dot))
-  ) {
-    for (pos of piece1.pos) {
-      for (dot of pos) {
-        dot.x--;
+  if (gameState.active) {
+    if (
+      direction === Direction.Left &&
+      piece1.pos[piece1.currPos].every((dot) => leftIsOpen(dot))
+    ) {
+      for (pos of piece1.pos) {
+        for (dot of pos) {
+          dot.x--;
+        }
       }
-    }
-  } else if (
-    direction === Direction.Right &&
-    piece1.pos[piece1.currPos].every((dot) => rightIsOpen(dot))
-  ) {
-    for (pos of piece1.pos) {
-      for (dot of pos) {
-        dot.x++;
+    } else if (
+      direction === Direction.Right &&
+      piece1.pos[piece1.currPos].every((dot) => rightIsOpen(dot))
+    ) {
+      for (pos of piece1.pos) {
+        for (dot of pos) {
+          dot.x++;
+        }
       }
+    } else if (
+      direction === Direction.Down &&
+      piece1.pos[piece1.currPos].every((dot) => nextIsOpen(dot, "player2"))
+    ) {
+      const newPiece = dropPiece(piece1);
+      const color = newPiece.color;
+      for (dot of newPiece.pos) {
+        gameState.placedDots.push({ ...dot, color });
+        gameState.score++;
+      }
+      gameState.player1.piece = getRandomPiece(0);
+    } else if (direction === Direction.Up) {
+      gameState.player1.piece.currPos = rotate(gameState.player1.piece);
     }
-  } else if (
-    direction === Direction.Down &&
-    piece1.pos[piece1.currPos].every((dot) => nextIsOpen(dot, "player2"))
-  ) {
-    const newPiece = dropPiece(piece1);
-    const color = newPiece.color;
-    for (dot of newPiece.pos) {
-      gameState.placedDots.push({ ...dot, color });
-      gameState.score++;
-    }
-    gameState.player1.piece = getRandomPiece(0);
-  } else if (direction === Direction.Up) {
-    gameState.player1.piece.currPos = rotate(gameState.player1.piece);
   }
 }
 
